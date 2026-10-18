@@ -168,6 +168,48 @@ body:after{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;back
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 
 </style>
+
+<style id="nexora-aboutme-identical-cursor-style">
+/* NEXORA ULTRA LIVE AURA CURSOR — isolated addition */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  #nexora-cursor-canvas {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 9997; overflow: hidden;
+  }
+  #nexora-cursor-aura {
+    position: fixed; left: 0; top: 0; width: 34px; height: 34px;
+    border: 1px solid rgba(218, 170, 255, .88); border-radius: 50%;
+    pointer-events: none; z-index: 9999; opacity: 0;
+    transform: translate3d(-100px,-100px,0) translate(-50%,-50%) scale(.72);
+    background: radial-gradient(circle, rgba(236,72,153,.12) 0%, rgba(167,139,250,.08) 48%, transparent 72%);
+    box-shadow: 0 0 13px rgba(167,139,250,.28), inset 0 0 10px rgba(236,72,153,.12);
+    transition: width .22s ease, height .22s ease, border-color .22s ease,
+      background .22s ease, box-shadow .22s ease, opacity .2s ease;
+    will-change: transform, width, height;
+  }
+  #nexora-cursor-aura::after {
+    content: ""; position: absolute; width: 5px; height: 5px; left: 50%; top: 50%;
+    border-radius: 50%; transform: translate(-50%,-50%);
+    background: #fff; box-shadow: 0 0 8px #fff, 0 0 16px #fb7185, 0 0 24px #a78bfa;
+  }
+  body.nexora-cursor-ready { cursor: none; }
+  body.nexora-cursor-ready a, body.nexora-cursor-ready button,
+  body.nexora-cursor-ready [role="button"], body.nexora-cursor-ready input,
+  body.nexora-cursor-ready textarea, body.nexora-cursor-ready select,
+  body.nexora-cursor-ready label { cursor: none !important; }
+  #nexora-cursor-aura.is-hovering {
+    width: 48px; height: 48px; border-color: rgba(251,113,133,.95);
+    background: radial-gradient(circle, rgba(236,72,153,.17), rgba(167,139,250,.10) 55%, transparent 73%);
+    box-shadow: 0 0 18px rgba(236,72,153,.36), 0 0 34px rgba(167,139,250,.18), inset 0 0 12px rgba(236,72,153,.15);
+  }
+  #nexora-cursor-aura.is-pressed { width: 25px; height: 25px; }
+}
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  #nexora-cursor-canvas, #nexora-cursor-aura { display: none !important; }
+}
+
+
+</style>
 </head>
 <body>
 <div class="app">
@@ -271,6 +313,135 @@ $('makehashtags').addEventListener('click',()=>{const raw=$('hashtopic').value.t
 $('copyhashtags').addEventListener('click',()=>{if(navigator.clipboard?.writeText)navigator.clipboard.writeText(lastHashtags).then(()=>toast('Hashtags copied')).catch(()=>prompt('Copy hashtags',lastHashtags));else prompt('Copy hashtags',lastHashtags)});
 $('postdate').value=todayISO();persist();render();preview();
 })();
+</script>
+
+<script>
+
+
+/* NEXORA ULTRA LIVE AURA CURSOR — isolated addition */
+(() => {
+  const finePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches;
+  if (!finePointer) return;
+
+  const canvas = document.createElement('canvas');
+  canvas.id = 'nexora-cursor-canvas';
+  canvas.setAttribute('aria-hidden', 'true');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  if (!ctx) return;
+
+  const aura = document.createElement('div');
+  aura.id = 'nexora-cursor-aura';
+  aura.setAttribute('aria-hidden', 'true');
+  document.body.append(canvas, aura);
+  document.body.classList.add('nexora-cursor-ready');
+
+  let width = 0, height = 0, dpr = 1, mouseX = -100, mouseY = -100;
+  let auraX = mouseX, auraY = mouseY, visible = false, frame = 0;
+  const particles = [];
+  const colors = [
+    [167, 139, 250], [236, 72, 153], [103, 232, 249], [251, 113, 133]
+  ];
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function addParticle(x, y, vx, vy, power = 1) {
+    const color = colors[(Math.random() * colors.length) | 0];
+    particles.push({
+      x, y, vx: vx * .12 + (Math.random() - .5) * 1.1,
+      vy: vy * .12 + (Math.random() - .5) * 1.1,
+      size: (1.1 + Math.random() * 3.0) * power,
+      life: 1, decay: .018 + Math.random() * .025, color,
+      phase: Math.random() * Math.PI * 2,
+      drag: .91 + Math.random() * .045
+    });
+    if (particles.length > 105) particles.splice(0, particles.length - 105);
+  }
+
+  function onMove(event) {
+    const x = event.clientX, y = event.clientY;
+    if (mouseX > -50) {
+      const dx = x - mouseX, dy = y - mouseY;
+      const distance = Math.hypot(dx, dy);
+      const count = Math.min(7, Math.max(1, Math.floor(distance / 10)));
+      for (let i = 0; i < count; i++) {
+        const t = (i + 1) / count;
+        addParticle(mouseX + dx * t, mouseY + dy * t, dx, dy, .75 + Math.random() * .5);
+      }
+      if (distance > 18) {
+        addParticle(x, y, dx, dy, 1.15);
+        if (Math.random() > .55) addParticle(x, y, -dy, dx, .8);
+      }
+    }
+    mouseX = x; mouseY = y;
+    visible = true;
+    aura.style.opacity = '1';
+  }
+
+  function onLeave() { visible = false; aura.style.opacity = '0'; }
+  function onEnter() { visible = true; aura.style.opacity = '1'; }
+  function onDown() { aura.classList.add('is-pressed'); }
+  function onUp() { aura.classList.remove('is-pressed'); }
+  function onHover(event) {
+    const target = event.target && event.target.closest('a, button, [role="button"], input, textarea, select, label');
+    aura.classList.toggle('is-hovering', !!target);
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, width, height);
+    auraX += (mouseX - auraX) * .34;
+    auraY += (mouseY - auraY) * .34;
+    aura.style.transform = `translate3d(${auraX}px,${auraY}px,0) translate(-50%,-50%)`;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= p.drag; p.vy *= p.drag;
+      p.life -= p.decay;
+      p.phase += .08;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      const [r, g, b] = p.color;
+      const alpha = Math.max(0, p.life) * (.48 + Math.sin(p.phase) * .12);
+      const radius = p.size * (0.55 + p.life * .8);
+      const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius * 4.8);
+      glow.addColorStop(0, `rgba(${r},${g},${b},${alpha})`);
+      glow.addColorStop(.25, `rgba(${r},${g},${b},${alpha * .52})`);
+      glow.addColorStop(1, `rgba(${r},${g},${b},0)`);
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(p.x, p.y, radius * 4.8, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = `rgba(${Math.min(255,r+65)},${Math.min(255,g+65)},${Math.min(255,b+65)},${alpha})`;
+      ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(.45, radius * .48), 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+    if (visible || particles.length) frame = requestAnimationFrame(render);
+    else frame = 0;
+  }
+
+  function wake() { if (!frame) frame = requestAnimationFrame(render); }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+  window.addEventListener('mousemove', event => { onMove(event); wake(); }, { passive: true });
+  document.addEventListener('mouseenter', onEnter, { passive: true });
+  document.addEventListener('mouseleave', onLeave, { passive: true });
+  document.addEventListener('mousedown', onDown, { passive: true });
+  document.addEventListener('mouseup', onUp, { passive: true });
+  document.addEventListener('mouseover', onHover, { passive: true });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { visible = false; if (frame) cancelAnimationFrame(frame); frame = 0; }
+    else if (mouseX > -50) { visible = true; wake(); }
+  });
+})();
+
 </script>
 </body>
 </html>
