@@ -271,6 +271,41 @@ body:after{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;back
 }
 </style>
 
+
+<style id="nexora-connected-accounts-addition">
+/* Isolated Connected Accounts section — existing workspace styles remain untouched. */
+.nx-accounts-intro{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.nx-accounts-intro h2{font-size:17px;margin:0 0 5px;color:#f7f5ff}
+.nx-accounts-intro p{margin:0;color:#aab5d1;font-size:11px;max-width:670px}
+.nx-accounts-summary{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid rgba(167,139,250,.3);border-radius:999px;background:rgba(112,55,255,.1);color:#d8d2ff;font-size:10px;white-space:nowrap}
+.nx-accounts-summary i{width:7px;height:7px;border-radius:50%;background:#f5c56b;box-shadow:0 0 10px rgba(245,197,107,.65)}
+.nx-accounts-notice{padding:13px 14px;border:1px solid rgba(245,197,107,.27);border-radius:12px;background:linear-gradient(120deg,rgba(103,75,27,.16),rgba(20,25,48,.64));color:#d8d6e9;font-size:10px;line-height:1.65;margin-bottom:14px}
+.nx-accounts-notice strong{color:#ffe0a0}
+.nx-account-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.nx-account-card{min-width:0;padding:15px;border:1px solid rgba(126,141,255,.25);border-radius:15px;background:linear-gradient(145deg,rgba(19,25,52,.91),rgba(7,13,29,.96));box-shadow:0 14px 34px rgba(0,0,0,.2)}
+.nx-account-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.nx-platform-icon{width:39px;height:39px;flex:0 0 39px;border-radius:12px;display:grid;place-items:center;font-size:19px;font-weight:850;color:#fff;background:linear-gradient(135deg,rgba(138,77,255,.42),rgba(0,202,230,.22));border:1px solid rgba(160,151,255,.28);box-shadow:inset 0 1px rgba(255,255,255,.1)}
+.nx-account-name{font-size:13px;font-weight:800;color:#f6f5ff}
+.nx-account-type{font-size:9px;color:#9faaca;margin-top:2px}
+.nx-account-state{margin-left:auto;align-self:flex-start;padding:5px 7px;border:1px solid rgba(245,197,107,.28);border-radius:7px;color:#f5d69a;background:rgba(245,197,107,.08);font-size:9px;white-space:nowrap}
+.nx-account-desc{font-size:10px;line-height:1.65;color:#aab5d1;margin:0 0 11px;min-height:34px}
+.nx-account-card details{border-top:1px solid rgba(137,147,205,.16);padding-top:10px}
+.nx-account-card summary{cursor:pointer;color:#a9dfff;font-size:10px;font-weight:750;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nx-account-card summary::-webkit-details-marker{display:none}
+.nx-account-card summary:after{content:'＋';font-size:14px;color:#a78bfa}
+.nx-account-card details[open] summary:after{content:'−'}
+.nx-account-card details p{font-size:10px;line-height:1.65;color:#aab5d1;margin:9px 0 0}
+.nx-account-card details ul{padding-left:17px;margin:8px 0 0;color:#aab5d1;font-size:10px;line-height:1.7}
+.nx-account-foot{margin-top:13px;padding:13px;border:1px solid rgba(85,232,255,.2);border-radius:12px;background:linear-gradient(120deg,rgba(25,71,91,.16),rgba(45,29,83,.17))}
+.nx-account-foot h3{font-size:12px;margin:0 0 7px;color:#e8f7ff}
+.nx-account-foot p{font-size:10px;line-height:1.65;color:#aab5d1;margin:0}
+.nx-account-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.nx-account-step{padding:10px;border:1px solid rgba(136,151,220,.17);border-radius:10px;background:rgba(6,12,27,.55)}
+.nx-account-step b{display:block;font-size:10px;color:#d9d4ff;margin-bottom:4px}
+.nx-account-step span{display:block;font-size:9px;line-height:1.55;color:#9eabc9}
+@media(max-width:720px){.nx-account-grid{grid-template-columns:1fr}.nx-account-steps{grid-template-columns:1fr}.nx-account-desc{min-height:0}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -284,6 +319,7 @@ body:after{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;back
 <button data-view="library"><span>▤</span> Content Library</button>
 <button data-view="analytics"><span>⌁</span> Analytics</button>
 <button data-view="ideas"><span>✧</span> Ideas &amp; Hashtags</button>
+<button data-view="accounts"><span>◎</span> Connected Accounts</button>
 <button data-view="settings"><span>⚙</span> Settings</button>
 </nav>
 <div class="sidebottom"><div class="navlabel" style="margin-bottom:9px">Workspace storage</div><div class="account"><strong>✧ Your content space</strong><p id="storagecount">Your drafts stay in this browser.</p><div class="progress"><i id="storagebar"></i></div><p>Local planner · No auto-publishing</p></div></div>
@@ -321,6 +357,56 @@ body:after{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;back
 
 <section class="sectionview" id="view-ideas"><div class="panel"><div class="panelhead"><div><h2>Ideas &amp; Hashtags</h2><p>Use a prompt to spark your next post</p></div><span class="pill">Idea lab</span></div><div class="field"><label for="ideatopic">Topic or niche</label><input id="ideatopic" placeholder="e.g. skincare, personal brand, local café, fitness"></div><div class="field"><label for="ideagoal">Content goal</label><select id="ideagoal"><option>Educate my audience</option><option>Build community</option><option>Showcase a product</option><option>Tell a story</option><option>Encourage engagement</option></select></div><button class="primary" id="generateideas">✦ Generate ideas</button><div class="grid" id="ideasout" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-top:14px"></div><div class="panel" style="margin:14px 0 0;padding:13px;background:#0d1421"><h2 style="font-size:12px;margin-top:0">Hashtag starter</h2><div class="field"><label for="hashtopic">Keyword</label><input id="hashtopic" placeholder="your niche"></div><button id="makehashtags">Create hashtag set</button><div id="hashtagout" class="muted" style="margin-top:10px;overflow-wrap:anywhere"></div><button id="copyhashtags" class="smallbtn" style="display:none;margin-top:8px">Copy hashtags</button></div><p class="muted" style="font-size:10px">These are local prompt-based suggestions, not live trend data or a connected AI service.</p></div></section>
 
+
+<section class="sectionview" id="view-accounts">
+  <div class="panel">
+    <div class="nx-accounts-intro">
+      <div>
+        <h2>Connected Accounts</h2>
+        <p>Bring your social channels into one workspace. Connect official accounts first, then choose where each post or Reel should be published.</p>
+      </div>
+      <span class="nx-accounts-summary"><i></i> 0 connected · Setup required</span>
+    </div>
+    <div class="nx-accounts-notice"><strong>Connection setup is not active yet.</strong> These cards are a setup guide, not live connections. Nexora does not collect social passwords here. Real account linking requires each platform's official OAuth authorization, approved API access, and secure server-side token storage. Do not paste passwords, access tokens, app secrets, or verification codes into this page.</div>
+    <div class="nx-account-grid">
+      <article class="nx-account-card">
+        <div class="nx-account-top"><div class="nx-platform-icon" aria-hidden="true">◎</div><div><div class="nx-account-name">Instagram</div><div class="nx-account-type">Professional · Business / Creator</div></div><span class="nx-account-state">Not connected</span></div>
+        <p class="nx-account-desc">Prepare an eligible professional Instagram account for publishing photos, videos, and Reels through Meta's official platform APIs.</p>
+        <details><summary>View connection requirements</summary><p>Requires a Meta developer app, the correct Instagram publishing product and permissions, an eligible professional account, and the required account/Page relationship for the selected Meta login flow. Meta app review may be required before public use.</p></details>
+      </article>
+      <article class="nx-account-card">
+        <div class="nx-account-top"><div class="nx-platform-icon" aria-hidden="true">f</div><div><div class="nx-account-name">Facebook Pages</div><div class="nx-account-type">Pages · Posts / Reels</div></div><span class="nx-account-state">Not connected</span></div>
+        <p class="nx-account-desc">Link a Facebook Page you manage and publish eligible content with the permissions granted by its administrator.</p>
+        <details><summary>View connection requirements</summary><p>Requires Meta OAuth, a Facebook Page the authorizing person can manage, the appropriate Page access and publishing permissions, and Meta review/approval where applicable. Personal-profile publishing is not implied by Page access.</p></details>
+      </article>
+      <article class="nx-account-card">
+        <div class="nx-account-top"><div class="nx-platform-icon" aria-hidden="true">▶</div><div><div class="nx-account-name">YouTube</div><div class="nx-account-type">Channel · Video uploads</div></div><span class="nx-account-state">Not connected</span></div>
+        <p class="nx-account-desc">Authorize a YouTube channel for video uploads and supported channel actions.</p>
+        <details><summary>View connection requirements</summary><p>Requires a Google Cloud project, YouTube Data API configuration, OAuth consent and the appropriate upload scope. API quota, verification, and audit requirements can affect public upload behavior.</p></details>
+      </article>
+      <article class="nx-account-card">
+        <div class="nx-account-top"><div class="nx-platform-icon" aria-hidden="true">♪</div><div><div class="nx-account-name">TikTok</div><div class="nx-account-type">Video · Content Posting</div></div><span class="nx-account-state">Not connected</span></div>
+        <p class="nx-account-desc">Prepare an approved TikTok developer integration for creator-authorized video publishing.</p>
+        <details><summary>View connection requirements</summary><p>Requires a TikTok developer app, Content Posting API access, user authorization and the required scopes. TikTok may require an app audit before public posting; unaudited clients can have posting limitations.</p></details>
+      </article>
+      <article class="nx-account-card">
+        <div class="nx-account-top"><div class="nx-platform-icon" aria-hidden="true">in</div><div><div class="nx-account-name">LinkedIn</div><div class="nx-account-type">Personal / Organization · Posts</div></div><span class="nx-account-state">Not connected</span></div>
+        <p class="nx-account-desc">Connect a LinkedIn member or eligible organization identity for permitted publishing workflows.</p>
+        <details><summary>View connection requirements</summary><p>Requires a LinkedIn developer app, OAuth authorization, the relevant Share/Community Management permissions and any product access or review LinkedIn requires for the chosen member or organization publishing flow.</p></details>
+      </article>
+    </div>
+    <div class="nx-account-foot">
+      <h3>How publishing will work after integration</h3>
+      <p>Once official connections and the secure publishing service are configured, the Post Studio can offer platform selection, Publish Now, Schedule, and a per-platform result such as Published or Failed. None of those actions is enabled by this UI-only addition.</p>
+      <div class="nx-account-steps">
+        <div class="nx-account-step"><b>01 · Connect</b><span>Authorize the platform through its official sign-in screen.</span></div>
+        <div class="nx-account-step"><b>02 · Compose</b><span>Select connected channels and prepare each platform's media and caption.</span></div>
+        <div class="nx-account-step"><b>03 · Publish</b><span>Send through secure server-side API functions and track the returned result.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="sectionview" id="view-settings"><div class="grid two"><div class="panel"><div class="panelhead"><div><h2>Workspace settings</h2><p>Personalize your content planner</p></div></div><div class="field"><label for="workspacename">Workspace name</label><input id="workspacename" value="Nexora Workspace"></div><div class="field"><label for="brandcolor">Accent theme</label><select id="brandcolor"><option value="violet">Obsidian Violet</option><option value="cyan">Midnight Cyan</option><option value="pink">Cosmic Rose</option></select></div><button class="primary" id="savesettings">Save preferences</button></div><div class="panel"><div class="panelhead"><div><h2>Data backup</h2><p>Export or restore your local content</p></div></div><p class="muted">Export your posts as a JSON backup before clearing browser data or changing devices.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><button class="primary" id="exportbtn">↓ Export backup</button><button id="importbtn">↑ Import backup</button><input type="file" id="importfile" accept=".json,application/json" style="display:none"></div><button id="clearbtn" style="border-color:#743b52;color:#ff9cb3">Clear all local posts</button><p class="muted" style="font-size:10px;margin-top:12px">Browser storage is not cloud sync and may be isolated by Google Sites' embed frame.</p></div></div><div class="panel" id="cloud-panel" style="margin-top:14px"><div class="panelhead"><div><h2>☁ Nexora Cloud Sync</h2><p>Sign in to keep your posts in your Nexora Studio database</p></div><span class="pill" id="cloud-badge">Not connected</span></div><div class="formgrid"><div class="field"><label for="cloudemail">Email address</label><input id="cloudemail" type="email" autocomplete="email" placeholder="you@example.com"></div><div class="field"><label for="cloudpassword">Password</label><input id="cloudpassword" type="password" autocomplete="current-password" minlength="8" placeholder="At least 8 characters"></div></div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:5px"><button class="primary" id="cloudlogin" type="button">Sign in</button><button id="cloudsignup" type="button">Create account</button><button id="cloudlogout" type="button" style="display:none">Sign out</button><button id="cloudsync" type="button" class="primary" style="display:none">Sync local + cloud</button></div><p id="cloudstatus" class="muted" role="status" aria-live="polite" style="margin:12px 0 0;font-size:11px">Not signed in. Your current posts remain saved in this browser until you sign in and run the first sync.</p><p class="muted" style="font-size:10px;margin-top:8px">Images are uploaded to private Nexora Storage during Cloud Sync. Video files remain preview-only. Never enter social-media passwords or API secret keys here.</p></div>
 <div class="panel"><h2 style="font-size:12px;margin-top:0">Privacy &amp; integrations</h2><p class="muted">This is a local content planner. It does not automatically publish posts or retrieve private analytics. Never enter account passwords or API secrets here.</p></div></section>
 </main></div>
@@ -346,7 +432,7 @@ function persist(){try{localStorage.setItem('nexoraStudioPosts',JSON.stringify(p
 function toast(s){const t=$('toast');t.textContent=s;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400)}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function count(status){return posts.filter(p=>p.status===status).length}
-function nav(view){document.querySelectorAll('.sectionview').forEach(s=>s.classList.remove('show'));$('view-'+view).classList.add('show');document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));const t={dashboard:['Your creative command center','Make something remarkable ✦','Plan, create and organize your next great post.'],calendar:['Your publishing rhythm','Content Calendar','A thoughtful plan turns ideas into momentum.'],studio:['Your creative workspace','Post Studio','Shape the idea. Refine the words. Save your draft.'],library:['Everything in one place','Content Library','Find, filter and revisit your saved content.'],analytics:['Your planning snapshot','Analytics','Understand your content workflow at a glance.'],ideas:['The idea lab','Ideas & Hashtags','Turn a blank page into a starting point.'],settings:['Make it yours','Settings','Manage your workspace and keep your data safe.']}[view];$('eyebrow').textContent=t[0];$('greeting').textContent=t[1];$('subtitle').textContent=t[2];render();if(view==='studio')preview()}
+function nav(view){document.querySelectorAll('.sectionview').forEach(s=>s.classList.remove('show'));$('view-'+view).classList.add('show');document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===view));const t={dashboard:['Your creative command center','Make something remarkable ✦','Plan, create and organize your next great post.'],calendar:['Your publishing rhythm','Content Calendar','A thoughtful plan turns ideas into momentum.'],studio:['Your creative workspace','Post Studio','Shape the idea. Refine the words. Save your draft.'],library:['Everything in one place','Content Library','Find, filter and revisit your saved content.'],analytics:['Your planning snapshot','Analytics','Understand your content workflow at a glance.'],ideas:['The idea lab','Ideas & Hashtags','Turn a blank page into a starting point.'],accounts:['Your social channels','Connected Accounts','Review platform requirements and prepare secure account connections.'],settings:['Make it yours','Settings','Manage your workspace and keep your data safe.']}[view];$('eyebrow').textContent=t[0];$('greeting').textContent=t[1];$('subtitle').textContent=t[2];render();if(view==='studio')preview()}
 document.querySelectorAll('#nav button').forEach(b=>b.addEventListener('click',()=>nav(b.dataset.view)));
 document.addEventListener('click',e=>{const b=e.target.closest('[data-goto]');if(b)nav(b.dataset.goto)});
 function weekStart(){let d=new Date();d.setDate(d.getDate()-((d.getDay()+6)%7)+weekOffset*7);d.setHours(0,0,0,0);return d}
